@@ -22,7 +22,10 @@ fig = px.scatter(df, x = 'RPLANET', y = 'TPLANET')
 app = dash.Dash(__name__)
 
 # Frontend
-app.layout = html.Div()
+app.layout = html.Div([
+  html.H1('ExoPlanets chart'),
+  dcc.Graph(figure=fig)
+])
 
 if __name__ == '__main__':
   app.run_server(debug=True)
