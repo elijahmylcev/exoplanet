@@ -1,4 +1,8 @@
 from urllib import response
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+
 import requests
 import pandas as pd
 import plotly.express as px
@@ -12,4 +16,13 @@ df = pd.json_normalize(response.json())
 print(df.head())
 
 fig = px.scatter(df, x = 'RPLANET', y = 'TPLANET')
-fig.show()
+
+# fig.show()
+
+app = dash.Dash(__name__)
+
+# Frontend
+app.layout = html.Div()
+
+if __name__ == '__main__':
+  app.run_server(debug=True)
