@@ -10,12 +10,14 @@ import plotly.io as pol
 
 pol.renderers.default = 'browser'
 
+# READ DATA
 response = requests.get('http://asterank.com/api/kepler?query={}&limit=2000')
 df = pd.json_normalize(response.json())
+df = df[df['PER'] > 0]
 
 print(df.head())
 
-fig = px.scatter(df, x = 'RPLANET', y = 'A')
+# fig = px.scatter(df, x = 'RPLANET', y = 'A')
 
 rplanet_selector = dcc.RangeSlider(
   id='range-slider',
@@ -30,11 +32,11 @@ rplanet_selector = dcc.RangeSlider(
 
 app = dash.Dash(__name__)
 
-# Frontend
+# FRONTEND
 app.layout = html.Div([
   html.H1('Planet Temperature ~ Distance from the Star'),
   html.Div(rplanet_selector, style = {'width': '50%'}),
-  dcc.Graph(id='dist-temp-chart', figure=fig)
+  dcc.Graph(id='dist-temp-chart')
 ],
 style={
   'margin': '0 auto',
@@ -43,13 +45,14 @@ style={
 }
 )
 
+# CALLBACKS
+
 @app.callback(
   dash.Output(component_id='dist-temp-chart', component_property='figure'),
   dash.Input(component_id='range-slider', component_property='value')
 )
 #                          component_property 
 def update_dist_temp_chart(radius_range):
-  print(radius_range[0], radius_range[1])
   chart_data = df[(df['RPLANET'] > radius_range[0]) & (df['RPLANET'] < radius_range[1])]
   fig = px.scatter(chart_data, x='TPLANET', y='A')
 
